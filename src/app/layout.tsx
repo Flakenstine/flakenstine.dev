@@ -1,6 +1,7 @@
 import "@/styles/globals.css";
 import { IBM_Plex_Mono } from "next/font/google";
 import { type Metadata } from "next";
+import { Toaster } from "@/components/ui/sonner";
 
 const ibmPlexMono = IBM_Plex_Mono({
   subsets: ["latin"],
@@ -19,7 +20,20 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${ibmPlexMono.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <Toaster
+          position="bottom-right"
+          theme="dark"
+          toastOptions={{
+            style: {
+              background: "#000",
+              border: "1px solid #00FF9D",
+              color: "#fff",
+            },
+          }}
+        />
+      </body>
     </html>
   );
 }

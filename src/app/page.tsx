@@ -1,9 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { GamepadIcon } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { ContactForm } from "@/components/contact-form";
 
 export default function HomePage() {
   return (
@@ -102,27 +100,7 @@ export default function HomePage() {
         {/* Contact Form */}
         <div className="w-full max-w-md space-y-4">
           <h2 className="text-xl">let&apos;s chat</h2>
-          <form className="space-y-4">
-            <div>
-              <Input
-                placeholder="hello@flakenstine.dev"
-                type="email"
-                className="w-full rounded bg-white/10 p-2"
-              />
-            </div>
-            <div>
-              <Textarea
-                placeholder="Type your message here"
-                className="h-32 w-full rounded bg-white/10 p-2"
-              />
-            </div>
-            <Button
-              type="submit"
-              className="w-full rounded bg-[#00FF9D] py-2 text-black hover:bg-[#00FF9D]/90 hover:text-black"
-            >
-              Send message
-            </Button>
-          </form>
+          <ContactForm />
 
           <div className="text-center">
             <p className="my-4">or</p>
