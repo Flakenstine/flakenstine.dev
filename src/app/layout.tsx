@@ -2,6 +2,8 @@ import "@/styles/globals.css";
 import { IBM_Plex_Mono } from "next/font/google";
 import { type Metadata } from "next";
 import { Toaster } from "@/components/ui/sonner";
+import { SiteHeader } from "@/components/site-header";
+import { SiteFooter } from "@/components/site-footer";
 
 const ibmPlexMono = IBM_Plex_Mono({
   subsets: ["latin"],
@@ -10,7 +12,7 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Flakenstine",
+  title: "flakenstine.dev | website guy",
   description: "I like to make cool websites",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
@@ -20,8 +22,10 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${ibmPlexMono.variable}`}>
-      <body>
+      <body className="min-h-screen bg-black font-mono text-white">
+        <SiteHeader />
         {children}
+        <SiteFooter />
         <Toaster
           position="bottom-right"
           theme="dark"
