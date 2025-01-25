@@ -26,7 +26,7 @@ export function MainNav() {
         asChild
       >
         <Link
-          href="https://discord.gg/your-discord"
+          href="https://discordapp.com/users/129471053717176320"
           className="flex items-center gap-2"
         >
           <svg
