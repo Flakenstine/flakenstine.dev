@@ -13,7 +13,7 @@ export function MainNav() {
       {navItems.map((item) => (
         <Link
           key={item.name}
-          className="rounded-md px-2 py-2 transition-all duration-200 hover:bg-[#00FF9D] hover:text-black"
+          className="rounded-md px-2 py-1.5 transition-all duration-200 hover:bg-[#00FF9D] hover:text-black"
           href={item.href}
         >
           {item.name}
