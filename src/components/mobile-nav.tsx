@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-base-to-string */
 "use client";
 
 import { useCallback, useState } from "react";
@@ -48,10 +49,10 @@ export default function MobileNav() {
             <MobileLink href="/" className="text-black">
               Home
             </MobileLink>
-            <MobileLink href="#" className="text-black">
+            <MobileLink href="/about" className="text-black">
               About
             </MobileLink>
-            <MobileLink href="#" className="text-black">
+            <MobileLink href="/blog" className="text-black">
               Blog
             </MobileLink>
             <Button variant={"ghost"} className="w-full justify-start">
