@@ -81,8 +81,10 @@ export default function HomePage() {
                 className="bg-[#00FF9D] text-black hover:bg-[#00FF9D]/90 hover:text-black"
               >
                 <Link
-                  href="https://twitter.com/your-handle"
+                  href="https://x.com/Flakenstine"
                   className="text-[#00FF9D]"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   <svg
                     role="img"
@@ -101,8 +103,10 @@ export default function HomePage() {
                 className="bg-[#00FF9D] text-black hover:bg-[#00FF9D]/90 hover:text-black"
               >
                 <Link
-                  href="https://discord.gg/your-discord"
+                  href="https://discordapp.com/users/129471053717176320"
                   className="text-[#00FF9D]"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   <svg
                     role="img"
@@ -121,8 +125,10 @@ export default function HomePage() {
                 className="bg-[#00FF9D] text-black hover:bg-[#00FF9D]/90 hover:text-black"
               >
                 <Link
-                  href="https://instagram.com/your-handle"
+                  href="https://www.instagram.com/flakenstine/"
                   className="text-[#00FF9D]"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   <svg
                     role="img"
@@ -141,7 +147,7 @@ export default function HomePage() {
                 className="bg-[#00FF9D] text-black hover:bg-[#00FF9D]/90 hover:text-black"
               >
                 <Link
-                  href="https://linkedin.com/in/your-profile"
+                  href="https://www.linkedin.com/in/isaac-goodwin-03827b124/"
                   className="text-[#00FF9D]"
                   target="_blank"
                   rel="noopener noreferrer"

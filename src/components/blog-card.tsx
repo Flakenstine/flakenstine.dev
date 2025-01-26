@@ -10,6 +10,14 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 
+import {
+  MinimalCard,
+  MinimalCardDescription,
+  MinimalCardFooter,
+  MinimalCardImage,
+  MinimalCardTitle,
+} from "@/components/ui/minimal-card";
+
 interface BlogCardProps {
   title: string;
   description: string;
@@ -27,29 +35,23 @@ export function BlogCard({
 }: BlogCardProps) {
   return (
     <motion.div
-      className="rounded-lg bg-gray-800 p-4 shadow-md"
+      className="rounded-lg bg-transparent p-4 shadow-md"
       whileHover={{ scale: 1.05 }}
       transition={{ type: "spring", stiffness: 300 }}
     >
       <Link href={`/blog/${slug}`}>
-        <CardHeader>
-          <CardTitle>{title}</CardTitle>
-          <CardDescription>{description}</CardDescription>
-        </CardHeader>
-        <div className="relative h-48 w-full">
-          <Image
-            src={image}
-            alt={title}
-            fill
-            className="rounded-lg object-cover"
-          />
-        </div>
-        <CardFooter>
-          <p className="text-sm text-gray-400">{date.toString()}</p>
-          {/* <Link href={`/blog/${slug}`} className="text-[#00FF9D] hover:underline">
-          Read More
-        </Link> */}
-        </CardFooter>
+        <MinimalCard>
+          <MinimalCardImage src={image} alt={title} />
+          <MinimalCardTitle className="text-gray-800">{title}</MinimalCardTitle>
+          <MinimalCardDescription>
+            <p>{description}</p>
+          </MinimalCardDescription>
+          <MinimalCardFooter>
+            <p className="text-sm text-gray-400">
+              Published on {date.toString()}
+            </p>
+          </MinimalCardFooter>
+        </MinimalCard>
       </Link>
     </motion.div>
   );
