@@ -6,6 +6,7 @@ import { remark } from "remark";
 import html from "remark-html";
 import type { Plugin } from "unified";
 import { MoveLeft } from "lucide-react";
+import PageTransition from "@/components/page-transition";
 
 // Add generateStaticParams to help Next.js understand the params structure
 export async function generateStaticParams() {
@@ -57,29 +58,31 @@ export default async function BlogPost({
     }
 
     return (
-      <div className="container mx-auto px-4 py-8">
-        <Link
-          href="/blog"
-          className="mb-8 inline-flex items-center gap-2 text-[#00FF9D] hover:underline"
-        >
-          <MoveLeft className="h-4 w-4" />
-          Back to Blog
-        </Link>
-        <div className="mb-8 text-center">
-          <h1 className="text-4xl font-bold">{title}</h1>
-          <div className="mt-4 flex items-center justify-center gap-2 text-sm text-gray-500">
-            <span>by {author}</span>
-            <span>•</span>
-            <span>{date}</span>
-            <span>•</span>
-            <span>{readingTime} minute read</span>
+      <PageTransition>
+        <div className="container mx-auto px-4 py-8">
+          <Link
+            href="/blog"
+            className="mb-8 inline-flex items-center gap-2 text-[#00FF9D] hover:underline"
+          >
+            <MoveLeft className="h-4 w-4" />
+            Back to Blog
+          </Link>
+          <div className="mb-8 text-center">
+            <h1 className="text-4xl font-bold">{title}</h1>
+            <div className="mt-4 flex items-center justify-center gap-2 text-sm text-gray-500">
+              <span>by {author}</span>
+              <span>•</span>
+              <span>{date}</span>
+              <span>•</span>
+              <span>{readingTime} minute read</span>
+            </div>
           </div>
+          <article
+            className="prose prose-invert prose-headings:text-white prose-h1:text-6xl prose-h2:text-3xl prose-p:text-gray-300 prose-a:text-[#00FF9D] prose-strong:text-white prose-code:text-white prose-pre:bg-gray-900 prose-blockquote:text-gray-300 prose-blockquote:border-[#00FF9D] prose-img:rounded-lg prose-img:mx-auto prose-img:shadow-lg mx-auto max-w-3xl"
+            dangerouslySetInnerHTML={{ __html: content }}
+          />
         </div>
-        <article
-          className="prose prose-invert prose-headings:text-white prose-h1:text-6xl prose-h2:text-3xl prose-p:text-gray-300 prose-a:text-[#00FF9D] prose-strong:text-white prose-code:text-white prose-pre:bg-gray-900 prose-blockquote:text-gray-300 prose-blockquote:border-[#00FF9D] prose-img:rounded-lg prose-img:mx-auto prose-img:shadow-lg mx-auto max-w-3xl"
-          dangerouslySetInnerHTML={{ __html: content }}
-        />
-      </div>
+      </PageTransition>
     );
   } catch (error) {
     console.error("Error loading blog post:", error);

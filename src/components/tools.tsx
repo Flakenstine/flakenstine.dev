@@ -215,6 +215,7 @@ export default function Tools() {
             key={tool.name}
             className="flex flex-col items-center"
             whileHover={{ scale: 1.1, rotate: 10 }}
+            whileTap={{ scale: 0.95, rotate: 10 }}
             transition={{ type: "spring", stiffness: 300 }}
           >
             <span className="size-6 text-[#00FF9D]">{tool.icon}</span>

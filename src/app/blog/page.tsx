@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/card";
 import { BlogCard } from "@/components/blog-card";
 import { type Metadata } from "next";
+import PageTransition from "@/components/page-transition";
 
 export const metadata: Metadata = {
   title: "flakenstine.dev | Blog",
@@ -36,35 +37,37 @@ export default async function BlogPage() {
     });
 
     return (
-      <main className="container mx-auto px-4 py-16">
-        <h1 className="mb-8 text-center text-3xl font-bold">
-          flakenstine.dev | Blog
-        </h1>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {posts.length > 0 ? (
-            posts.map((post) => (
-              <BlogCard
-                key={post.slug}
-                title={post.title}
-                description={post.description}
-                image={post.image}
-                slug={post.slug}
-                date={post.date}
-              />
-            ))
-          ) : (
-            <Card className="col-span-1 text-center sm:col-span-2 lg:col-span-3">
-              <CardHeader>
-                <CardTitle>No Blog Posts Available</CardTitle>
-                <CardDescription>
-                  It seems there are no blog posts at the moment. Please check
-                  back later!
-                </CardDescription>
-              </CardHeader>
-            </Card>
-          )}
-        </div>
-      </main>
+      <PageTransition>
+        <main className="container mx-auto px-4 py-16">
+          <h1 className="mb-8 text-center text-3xl font-bold">
+            flakenstine.dev | Blog
+          </h1>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {posts.length > 0 ? (
+              posts.map((post) => (
+                <BlogCard
+                  key={post.slug}
+                  title={post.title}
+                  description={post.description}
+                  image={post.image}
+                  slug={post.slug}
+                  date={post.date}
+                />
+              ))
+            ) : (
+              <Card className="col-span-1 text-center sm:col-span-2 lg:col-span-3">
+                <CardHeader>
+                  <CardTitle>No Blog Posts Available</CardTitle>
+                  <CardDescription>
+                    It seems there are no blog posts at the moment. Please check
+                    back later!
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            )}
+          </div>
+        </main>
+      </PageTransition>
     );
   } catch (error) {
     console.error("Error loading blog posts:", error);

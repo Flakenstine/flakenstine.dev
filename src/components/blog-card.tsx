@@ -36,7 +36,8 @@ export function BlogCard({
   return (
     <motion.div
       className="rounded-lg bg-transparent p-4 shadow-md"
-      whileHover={{ scale: 1.05 }}
+      whileHover={{ scale: 1.05, rotate: -1 }}
+      whileTap={{ scale: 0.95, rotate: -1 }}
       transition={{ type: "spring", stiffness: 300 }}
     >
       <Link href={`/blog/${slug}`}>
