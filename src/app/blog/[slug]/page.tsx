@@ -22,12 +22,15 @@ function calculateReadingTime(text: string): number {
 }
 
 export default async function BlogPost({ params }: PageProps) {
-  if (!params.slug) {
+  // Ensure params is defined
+  if (!params ?? !params.slug) {
     notFound();
   }
 
+  const { slug } = params;
+
   try {
-    const fullPath = path.join(process.cwd(), "posts", `${params.slug}.md`);
+    const fullPath = path.join(process.cwd(), "posts", `${slug}.md`);
     if (!fs.existsSync(fullPath)) {
       notFound();
     }
