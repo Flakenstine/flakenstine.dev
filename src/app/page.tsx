@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ContactForm } from "@/components/contact-form";
+import Tools from "@/components/tools";
 
 export default function HomePage() {
   return (
@@ -59,6 +60,7 @@ export default function HomePage() {
         <div className="space-y-4">
           <h2 className="text-xl">tools I like to use</h2>
           <div className="flex justify-center gap-4">
+            <Tools />
             {/* Add your tool icons here */}
           </div>
           <p className="text-sm text-gray-400">and more...</p>
