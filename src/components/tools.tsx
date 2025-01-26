@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { tools } from "@/config/tools";
 
 export default function Tools() {
   type Tool = {
@@ -218,7 +219,7 @@ export default function Tools() {
             whileTap={{ scale: 0.95, rotate: 10 }}
             transition={{ type: "spring", stiffness: 300 }}
           >
-            <span className="size-6 text-[#00FF9D]">{tool.icon}</span>
+            <span className="size-4 text-[#00FF9D] md:size-6">{tool.icon}</span>
             <span className="text-xs md:text-sm">{tool.name}</span>
           </motion.div>
         ))}
