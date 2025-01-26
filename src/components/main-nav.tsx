@@ -2,8 +2,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 const navItems = [
-  { name: "HOME", href: "/home" },
-  { name: "ABOUT", href: "/about" },
+  { name: "HOME", href: "/" },
   { name: "BLOG", href: "/blog" },
 ];
 

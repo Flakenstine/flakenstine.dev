@@ -4,6 +4,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import Link from "next/link";
 
 export function SiteFooter() {
   return (
@@ -56,6 +57,16 @@ export function SiteFooter() {
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
+      <span>
+        {" "}
+        | Source available on{" "}
+        <Link
+          href="https://github.com/flakenstine/flakenstine.dev"
+          className="text-[#00FF9D] underline"
+        >
+          Github
+        </Link>
+      </span>
     </footer>
   );
 }

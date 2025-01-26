@@ -2,12 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ContactForm } from "@/components/contact-form";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 export default function HomePage() {
   return (
@@ -147,6 +141,8 @@ export default function HomePage() {
                 <Link
                   href="https://linkedin.com/in/your-profile"
                   className="text-[#00FF9D]"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

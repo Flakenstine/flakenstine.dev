@@ -1,4 +1,6 @@
 import "@/styles/globals.css";
+import { Analytics } from "@vercel/analytics/react";
+
 import { IBM_Plex_Mono } from "next/font/google";
 import { type Metadata } from "next";
 import { Toaster } from "@/components/ui/sonner";
@@ -37,6 +39,7 @@ export default function RootLayout({
             },
           }}
         />
+        <Analytics />
       </body>
     </html>
   );
