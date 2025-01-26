@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -12,49 +13,53 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { contactFormSchema, type ContactFormValues } from "@/lib/schemas";
-import { toast } from "sonner";
+import { Toaster, toast } from "sonner";
+
+// Define the Zod schema for validation
+const contactFormSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Invalid email address"),
+  message: z.string().min(10, "Message is required"),
+});
+
+// Define the type for form values
+type ContactFormValues = z.infer<typeof contactFormSchema>;
+
+type ApiResponse = {
+  message?: string;
+  error?: string;
+};
 
 export function ContactForm() {
   const form = useForm<ContactFormValues>({
     resolver: zodResolver(contactFormSchema),
     defaultValues: {
+      name: "",
       email: "",
       message: "",
     },
   });
 
   async function onSubmit(data: ContactFormValues) {
-    const promise = new Promise<{ message: string; data: ContactFormValues }>(
-      (resolve, reject) => {
-        setTimeout(() => {
-          // Simulate random success/failure
-          if (Math.random() > 0.5) {
-            resolve({
-              message: "Message sent successfully!",
-              data,
-            });
-          } else {
-            reject(new Error("Failed to send message. Please try again."));
-          }
-        }, 1000);
-      },
-    );
-
     try {
-      toast.promise(promise, {
-        loading: "Sending message...",
-        success: (data) => {
-          form.reset();
-          return "Message sent successfully!";
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-        error: (err: unknown) => {
-          const error = err as Error;
-          return error.message ?? "Something went wrong";
-        },
+        body: JSON.stringify(data),
       });
-    } catch (error) {
-      console.error(error);
+
+      const responseData = (await response.json()) as ApiResponse;
+
+      if (response.ok) {
+        toast.success(responseData.message ?? "Message sent successfully!");
+        form.reset();
+      } else {
+        toast.error(responseData.error ?? "Failed to send message.");
+      }
+    } catch {
+      toast.error("Failed to send message.");
     }
   }
 
@@ -63,15 +68,29 @@ export function ContactForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <Input
+                  placeholder="Your Name"
+                  className="rounded border border-gray-300 p-2"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage className="text-sm text-red-500" />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
           name="email"
           render={({ field }) => (
             <FormItem>
               <FormControl>
                 <Input
                   placeholder="hello@flakenstine.dev"
-                  type="email"
-                  className="w-full rounded bg-white/10 p-2 focus:ring-[#00FF9D] focus:ring-offset-0"
-                  autoComplete="email"
+                  className="rounded border border-gray-300 p-2"
                   {...field}
                 />
               </FormControl>
@@ -87,7 +106,7 @@ export function ContactForm() {
               <FormControl>
                 <Textarea
                   placeholder="Type your message here"
-                  className="h-32 w-full rounded bg-white/10 p-2 focus:ring-[#00FF9D] focus:ring-offset-0"
+                  className="h-32 rounded border border-gray-300 p-2"
                   {...field}
                 />
               </FormControl>
@@ -100,14 +119,7 @@ export function ContactForm() {
           className="w-full rounded bg-[#00FF9D] py-2 text-black hover:bg-[#00FF9D]/90 hover:text-black disabled:opacity-50"
           disabled={form.formState.isSubmitting}
         >
-          {form.formState.isSubmitting ? (
-            <div className="flex items-center gap-2">
-              <div className="h-4 w-4 animate-spin rounded-full border-2 border-black border-t-transparent" />
-              Sending...
-            </div>
-          ) : (
-            "Send message"
-          )}
+          {form.formState.isSubmitting ? "Sending..." : "Send Message"}
         </Button>
       </form>
     </Form>
