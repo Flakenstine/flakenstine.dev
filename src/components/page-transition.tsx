@@ -20,7 +20,7 @@ export default function PageTransition({
       animate="enter"
       exit="exit"
       transition={{ type: "linear", duration: 0.5 }}
-      className="flex w-full flex-col items-start"
+      className="container mx-auto px-4 py-16"
     >
       {children}
     </motion.main>
