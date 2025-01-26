@@ -209,7 +209,7 @@ export default function Tools() {
 
   return (
     <div className="flex justify-center gap-4">
-      <div className="flex w-[30rem] flex-row flex-wrap items-center justify-center gap-4">
+      <div className="flex w-[30rem] flex-row flex-wrap items-center justify-center gap-4 transition-all duration-200 ease-in-out">
         {tools.map((tool) => (
           <motion.div
             key={tool.name}
@@ -219,7 +219,7 @@ export default function Tools() {
             transition={{ type: "spring", stiffness: 300 }}
           >
             <span className="size-6 text-[#00FF9D]">{tool.icon}</span>
-            <span className="text-sm">{tool.name}</span>
+            <span className="text-xs md:text-sm">{tool.name}</span>
           </motion.div>
         ))}
       </div>
