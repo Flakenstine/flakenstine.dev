@@ -7,10 +7,14 @@ import html from "remark-html";
 import type { Plugin } from "unified";
 import { MoveLeft } from "lucide-react";
 
-interface PageProps {
-  params: {
-    slug: string;
-  };
+// Add generateStaticParams to help Next.js understand the params structure
+export async function generateStaticParams() {
+  const postsDirectory = path.join(process.cwd(), "posts");
+  const fileNames = fs.readdirSync(postsDirectory);
+
+  return fileNames.map((fileName) => ({
+    slug: fileName.replace(/\.md$/, ""),
+  }));
 }
 
 // Function to calculate reading time
@@ -21,13 +25,18 @@ function calculateReadingTime(text: string): number {
   return readingTime;
 }
 
-export default async function BlogPost({ params }: PageProps) {
-  // Ensure params is defined
-  if (!params ?? !params.slug) {
+// Use Next.js's built-in types
+export default async function BlogPost({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const resolvedParams = await params;
+  if (!resolvedParams?.slug) {
     notFound();
   }
 
-  const { slug } = params;
+  const { slug } = resolvedParams;
 
   try {
     const fullPath = path.join(process.cwd(), "posts", `${slug}.md`);
