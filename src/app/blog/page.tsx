@@ -24,7 +24,7 @@ export default async function BlogPage() {
     const posts = fileNames.map((fileName) => {
       const fullPath = path.join(postsDirectory, fileName);
       const fileContents = fs.readFileSync(fullPath, "utf8");
-      const { title, date, description, slug, image } =
+      const { title, date, description, image } =
         parseMarkdownMetadata(fileContents);
 
       return {

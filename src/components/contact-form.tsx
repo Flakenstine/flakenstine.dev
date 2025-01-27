@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Toaster, toast } from "sonner";
+import { toast } from "sonner";
 
 // Define the Zod schema for validation
 const contactFormSchema = z.object({
