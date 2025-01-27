@@ -5,6 +5,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import Link from "next/link";
+import { LinkPreview } from "./ui/link-preview";
 
 export function SiteFooter() {
   return (
@@ -58,12 +59,12 @@ export function SiteFooter() {
       <span>
         {" "}
         | Source available on{" "}
-        <Link
-          href="https://github.com/flakenstine/flakenstine.dev"
+        <LinkPreview
+          url="https://github.com/flakenstine/flakenstine.dev"
           className="text-[#00FF9D] underline"
         >
           Github
-        </Link>
+        </LinkPreview>
       </span>
     </footer>
   );

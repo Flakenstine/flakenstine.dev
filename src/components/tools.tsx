@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { LinkPreview } from "./ui/link-preview";
 
 export default function Tools() {
   type Tool = {

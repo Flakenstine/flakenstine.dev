@@ -33,11 +33,11 @@ export default function HomePage() {
 
           {/* Introduction */}
           <div className="space-y-4">
-            <h1 className="text-2xl">
+            <h1 className="text-2xl font-bold md:text-5xl">
               <span className="text-[#00FF9D]">Hi there. I am</span>{" "}
-              Flakenstine.
+              <span className="text-[#E1F8D4]">Flakenstine.</span>
             </h1>
-            <p className="text-2xl">
+            <p className="py-10 text-2xl font-bold text-[#E1F8D4] md:text-5xl">
               I like to make
               <br />
               cool <span className="text-[#00FF9D]">websites</span>.
@@ -45,7 +45,7 @@ export default function HomePage() {
           </div>
 
           {/* About Text */}
-          <div className="max-w-2xl space-y-6 text-center text-gray-400">
+          <div className="max-w-2xl space-y-6 text-center text-gray-400 transition-all duration-300 md:text-xl">
             <p>
               The web is my playground; Since high-school I have been playing
               around with various web technologies and systems, my favorite
@@ -83,9 +83,9 @@ export default function HomePage() {
 
             <div className="text-center">
               <div className="flex w-full items-center justify-center gap-3">
-                <Separator className="w-1/2" />
+                <Separator className="w-1/4" />
                 <p className="my-4">or</p>
-                <Separator className="w-1/2" />
+                <Separator className="w-1/4" />
               </div>
               <div className="flex justify-center gap-4">
                 <TooltipProvider>
