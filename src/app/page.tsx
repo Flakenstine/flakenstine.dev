@@ -37,7 +37,7 @@ export default function HomePage() {
               <span className="text-[#00FF9D]">Hi there. I am</span>{" "}
               <span className="text-[#E1F8D4]">Flakenstine.</span>
             </h1>
-            <p className="text-2xl font-bold text-[#E1F8D4] md:py-10 md:text-5xl">
+            <p className="text-1xl font-bold text-[#E1F8D4] md:py-10 md:text-5xl">
               I like to make
               <br />
               cool <span className="text-[#00FF9D]">websites</span>.
