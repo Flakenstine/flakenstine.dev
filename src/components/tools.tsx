@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { tools } from "@/config/tools";
 
 export default function Tools() {
   type Tool = {
