@@ -56,7 +56,7 @@ export default function MobileNav() {
               href="https://discordapp.com/users/129471053717176320"
               className="inline-flex gap-2 text-black"
             >
-              <span className="size-4">
+              <span className="size-6">
                 {" "}
                 <svg
                   role="img"
