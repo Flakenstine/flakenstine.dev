@@ -2,7 +2,7 @@
 
 # Check if current branch is "Main"
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-if [ "$CURRENT_BRANCH" != "Main" ]; then
+if [ "$CURRENT_BRANCH" != "main" ]; then
   echo "Error: Not on Main branch. Aborting deployment."
   exit 1
 fi
