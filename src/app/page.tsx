@@ -43,6 +43,7 @@ export default function HomePage() {
               cool <span className="text-[#00FF9D]">websites</span>.
             </p>
           </div>
+          <Separator className="bg-transparent bg-gradient-to-r from-transparent via-[#00FF9D] to-transparent opacity-25 dark:opacity-100" />
 
           {/* About Text */}
           <div className="max-w-2xl space-y-6 text-center text-gray-400 transition-all duration-300 md:text-xl">
@@ -75,7 +76,7 @@ export default function HomePage() {
             </div>
             <p className="text-sm text-gray-400">and more...</p>
           </div>
-
+          <Separator className="bg-transparent bg-gradient-to-r from-transparent via-[#00FF9D] to-transparent opacity-25 dark:opacity-100" />
           {/* Contact Form */}
           <div className="w-full max-w-md space-y-4">
             <h2 className="text-xl">let&apos;s chat</h2>

@@ -23,7 +23,7 @@ done
 
 # Build the project
 echo "Starting build..."
-if /bun run build; then
+if bun run build; then
   echo "Build successful!"
   
   # Push to GitHub
@@ -36,6 +36,6 @@ if /bun run build; then
 else
   echo "Build failed. Dumping stack trace:"
   # If build fails, show the error
-  /bun run build
+  bun run build
   exit 1
 fi
