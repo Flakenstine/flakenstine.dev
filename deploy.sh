@@ -30,7 +30,7 @@ if bun run build; then
   echo "Pushing changes to GitHub..."
   git add .
   git commit -m "$COMMIT_MESSAGE"
-  git push origin Main
+  git push origin main
   
   echo "Deployment complete!"
 else
