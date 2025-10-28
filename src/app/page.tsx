@@ -11,6 +11,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import TextType from "@/components/ui/text-type";
 
 export default function HomePage() {
   return (
@@ -34,8 +35,9 @@ export default function HomePage() {
           {/* Introduction */}
           <div className="space-y-4">
             <h1 className="text-2xl font-bold md:text-5xl">
-              <span className="text-[#00FF9D]">Hi there. I am</span>{" "}
-              <span className="text-[#E1F8D4]">Flakenstine.</span>
+              <TextType text="Hi there. I am Flakenstine." typingSpeed={75} initialDelay={1000} showCursor={true} cursorCharacter="_"/>
+              {/* <span className="text-[#00FF9D]">Hi there. I am</span>{" "}
+              <span className="text-[#E1F8D4]">Flakenstine.</span> */}
             </h1>
             <p className="text-1xl font-bold text-[#E1F8D4] md:py-10 md:text-5xl">
               I like to make
@@ -46,7 +48,7 @@ export default function HomePage() {
           <Separator className="bg-transparent bg-gradient-to-r from-transparent via-[#00FF9D] to-transparent opacity-25 dark:opacity-100" />
 
           {/* About Text */}
-          <div className="max-w-2xl space-y-6 text-center text-gray-400 transition-all duration-300 md:text-xl">
+          <div className="max-w-2xl space-y-6 text-center text-gray-400 transition-all duration-300 md:text-xl font-mono">
             <p>
               The web is my playground; Since high-school I have been playing
               around with various web technologies and systems, my favorite

@@ -14,7 +14,7 @@ export function SiteFooter() {
       <Separator className="bg-transparent bg-gradient-to-r from-transparent via-[#00FF9D] to-transparent opacity-25 dark:opacity-100" />
       <footer className="py-6 text-center text-sm text-gray-400">
         Powered by{" "}
-        <TooltipProvider>
+        {/* <TooltipProvider>
           <Tooltip>
             <TooltipTrigger className="px-1">
               <span className="inline-block align-middle text-[#00FF9D]">
@@ -36,7 +36,7 @@ export function SiteFooter() {
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
-        <span className="px-1">+</span>
+        <span className="px-1">+</span> */}
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger className="px-1">
