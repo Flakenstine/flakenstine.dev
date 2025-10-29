@@ -1,12 +1,8 @@
 /* eslint-disable @typescript-eslint/no-base-to-string */
-"use client";
-
 import { useCallback, useState } from "react";
 import { DrawerTrigger, Drawer, DrawerContent } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
-import { type LinkProps } from "next/link";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { Link, type LinkProps } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
 
 export default function MobileNav() {
@@ -46,15 +42,17 @@ export default function MobileNav() {
       <DrawerContent className="max-h-[60svh] p-0">
         <div className="overflow-auto p-6">
           <div className="flex flex-col space-y-3">
-            <MobileLink href="/" className="text-black">
+            <MobileLink to="/" className="text-black">
               Home
             </MobileLink>
-            <MobileLink href="/blog" className="text-black">
+            <MobileLink to="/blog" className="text-black">
               Blog
             </MobileLink>
-            <MobileLink
+            <a
               href="https://discordapp.com/users/129471053717176320"
-              className="inline-flex gap-2 text-black"
+              className="inline-flex gap-2 text-black text-base"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <span className="size-6">
                 {" "}
@@ -69,7 +67,7 @@ export default function MobileNav() {
                 </svg>
               </span>
               Discord
-            </MobileLink>
+            </a>
             {/* <Button
               variant="ghost"
               size="sm"
@@ -105,22 +103,16 @@ interface MobileLinkProps extends LinkProps {
 }
 
 function MobileLink({
-  href,
+  to,
   onOpenChange,
   className,
   children,
   ...props
 }: MobileLinkProps) {
-  const router = useRouter();
-
-  // Ensure href is a string
-  const hrefString = typeof href === "string" ? href : String(href);
-
   return (
     <Link
-      href={hrefString}
+      to={to}
       onClick={() => {
-        void router.push(hrefString);
         onOpenChange?.(false);
       }}
       className={cn("text-base", className)}

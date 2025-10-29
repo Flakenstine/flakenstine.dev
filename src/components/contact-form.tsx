@@ -14,6 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { sendContactEmail } from "@/server/contact";
 
 // Define the Zod schema for validation
 const contactFormSchema = z.object({
@@ -24,11 +25,6 @@ const contactFormSchema = z.object({
 
 // Define the type for form values
 type ContactFormValues = z.infer<typeof contactFormSchema>;
-
-type ApiResponse = {
-  message?: string;
-  error?: string;
-};
 
 export function ContactForm() {
   const form = useForm<ContactFormValues>({
@@ -42,21 +38,13 @@ export function ContactForm() {
 
   async function onSubmit(data: ContactFormValues) {
     try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      const result = await sendContactEmail({ data: data });
 
-      const responseData = (await response.json()) as ApiResponse;
-
-      if (response.ok) {
-        toast.success(responseData.message ?? "Message sent successfully!");
+      if (result.success) {
+        toast.success(result.message ?? "Message sent successfully!");
         form.reset();
       } else {
-        toast.error(responseData.error ?? "Failed to send message.");
+        toast.error(result.error ?? "Failed to send message.");
       }
     } catch {
       toast.error("Failed to send message.");

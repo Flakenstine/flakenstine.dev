@@ -33,7 +33,7 @@ function RootLayout() {
         <HeadContent />
       </head>
     <body className="min-h-screen bg-black font-sans text-white">
-      {/* <SiteHeader /> */}
+      <SiteHeader />
       <Outlet />
       {/* <SiteFooter /> */}
       <Toaster
