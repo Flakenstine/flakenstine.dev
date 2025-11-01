@@ -5,7 +5,7 @@ import { getPostBySlug } from "@/server/blog";
 
 export const Route = createFileRoute("/blog/$slug")({
   loader: async ({ params }) => {
-    const post = await getPostBySlug(params.slug);
+    const post = await getPostBySlug({ data: params.slug });
     if (!post) {
       throw notFound();
     }

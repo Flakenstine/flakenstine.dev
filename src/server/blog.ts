@@ -1,3 +1,4 @@
+import { createServerFn } from "@tanstack/react-start";
 import fs from "fs";
 import path from "path";
 import { remark } from "remark";
@@ -96,7 +97,7 @@ function calculateReadingTime(text: string): number {
   return readingTime;
 }
 
-export async function getAllPosts(): Promise<BlogPostMetadata[]> {
+export const getAllPosts = createServerFn().handler(async () => {
   const postsDirectory = path.join(process.cwd(), "posts");
 
   try {
@@ -121,37 +122,39 @@ export async function getAllPosts(): Promise<BlogPostMetadata[]> {
     console.error("Error loading blog posts:", error);
     return [];
   }
-}
+});
 
-export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
-  try {
-    const fullPath = path.join(process.cwd(), "posts", `${slug}.md`);
+export const getPostBySlug = createServerFn()
+  .handler(async (ctx: { data: string }) => {
+    try {
+      const slug = ctx.data;
+      const fullPath = path.join(process.cwd(), "posts", `${slug}.md`);
 
-    if (!fs.existsSync(fullPath)) {
+      if (!fs.existsSync(fullPath)) {
+        return null;
+      }
+
+      const fileContents = fs.readFileSync(fullPath, "utf8");
+      const { title, date, author, body } = parseMarkdown(fileContents);
+      const readingTime = calculateReadingTime(body);
+
+      let content = "";
+      if (body) {
+        const result = await remark()
+          .use(html as Plugin)
+          .process(body);
+        content = result.toString();
+      }
+
+      return {
+        title,
+        date,
+        author,
+        content,
+        readingTime,
+      };
+    } catch (error) {
+      console.error("Error loading blog post:", error);
       return null;
     }
-
-    const fileContents = fs.readFileSync(fullPath, "utf8");
-    const { title, date, author, body } = parseMarkdown(fileContents);
-    const readingTime = calculateReadingTime(body);
-
-    let content = "";
-    if (body) {
-      const result = await remark()
-        .use(html as Plugin)
-        .process(body);
-      content = result.toString();
-    }
-
-    return {
-      title,
-      date,
-      author,
-      content,
-      readingTime,
-    };
-  } catch (error) {
-    console.error("Error loading blog post:", error);
-    return null;
-  }
-}
+  });

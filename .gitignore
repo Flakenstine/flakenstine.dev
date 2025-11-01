@@ -18,6 +18,11 @@ db.sqlite
 /out/
 next-env.d.ts
 
+
+# vite
+/dist
+
+
 # production
 /build
 
@@ -44,3 +49,6 @@ yarn-error.log*
 
 # idea files
 .idea
+
+# claude
+.claude
