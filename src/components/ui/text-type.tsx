@@ -1,13 +1,21 @@
 'use client';
 
-import { ElementType, useEffect, useRef, useState, createElement, useMemo, useCallback } from 'react';
+import {
+  createElement,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import type { ElementType, HTMLAttributes, ReactNode } from 'react';
 import { gsap } from 'gsap';
 
 interface TextTypeProps {
   className?: string;
   showCursor?: boolean;
   hideCursorWhileTyping?: boolean;
-  cursorCharacter?: string | React.ReactNode;
+  cursorCharacter?: string | ReactNode;
   cursorBlinkDuration?: number;
   cursorClassName?: string;
   text: string | string[];
@@ -44,7 +52,7 @@ const TextType = ({
   startOnVisible = false,
   reverseMode = false,
   ...props
-}: TextTypeProps & React.HTMLAttributes<HTMLElement>) => {
+}: TextTypeProps & HTMLAttributes<HTMLElement>) => {
   const [displayedText, setDisplayedText] = useState('');
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -102,7 +110,7 @@ const TextType = ({
 
     let timeout: NodeJS.Timeout;
 
-    const currentText = textArray[currentTextIndex];
+    const currentText = textArray[currentTextIndex] ?? '';
     const processedText = reverseMode ? currentText.split('').reverse().join('') : currentText;
 
     const executeTypingAnimation = () => {
@@ -114,12 +122,11 @@ const TextType = ({
           }
 
           if (onSentenceComplete) {
-            onSentenceComplete(textArray[currentTextIndex], currentTextIndex);
+            onSentenceComplete(currentText, currentTextIndex);
           }
 
           setCurrentTextIndex(prev => (prev + 1) % textArray.length);
           setCurrentCharIndex(0);
-          timeout = setTimeout(() => {}, pauseDuration);
         } else {
           timeout = setTimeout(() => {
             setDisplayedText(prev => prev.slice(0, -1));
@@ -163,11 +170,13 @@ const TextType = ({
     isVisible,
     reverseMode,
     variableSpeed,
+    getRandomSpeed,
     onSentenceComplete
   ]);
 
+  const currentTextLength = textArray[currentTextIndex]?.length ?? 0;
   const shouldHideCursor =
-    hideCursorWhileTyping && (currentCharIndex < textArray[currentTextIndex].length || isDeleting);
+    hideCursorWhileTyping && (currentCharIndex < currentTextLength || isDeleting);
 
   return createElement(
     Component,
@@ -176,7 +185,7 @@ const TextType = ({
       className: `inline-block whitespace-pre-wrap tracking-tight ${className}`,
       ...props
     },
-    <span className="inline" style={{ color: getCurrentTextColor() || 'inherit' }}>
+    <span className="inline" style={{ color: getCurrentTextColor() ?? 'inherit' }}>
       {displayedText}
     </span>,
     showCursor && (

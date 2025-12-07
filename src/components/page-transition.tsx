@@ -19,7 +19,7 @@ export default function PageTransition({
       initial="hidden"
       animate="enter"
       exit="exit"
-      transition={{ type: "linear", duration: 0.5 }}
+      transition={{ type: "tween", duration: 0.5, ease: "linear" }}
       className="container mx-auto px-4 py-16"
     >
       {children}

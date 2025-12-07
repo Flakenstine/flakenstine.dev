@@ -90,7 +90,8 @@ export function DiscordStatus({ userId, className = "" }: DiscordStatusProps) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         
-        const data: DiscordStatus = await response.json();
+        const raw: unknown = await response.json();
+        const data = raw as DiscordStatus;
         console.log("Discord status data:", data); // Debug log
         console.log("Discord status success:", data.success);
         console.log("Discord status value:", data.data?.discord_status);
@@ -106,10 +107,12 @@ export function DiscordStatus({ userId, className = "" }: DiscordStatusProps) {
     };
 
     // Initial fetch
-    fetchStatus();
+    void fetchStatus();
 
     // Set up polling every 30 seconds
-    const interval = setInterval(fetchStatus, 30000);
+    const interval = setInterval(() => {
+      void fetchStatus();
+    }, 30000);
 
     return () => clearInterval(interval);
   }, [userId]);
@@ -165,15 +168,15 @@ export function DiscordStatus({ userId, className = "" }: DiscordStatusProps) {
     const activities = status.data.activities || [];
     const isListeningToSpotify = status.data.listening_to_spotify;
     
-    let statusText = getStatusText(discordStatus);
+    const statusText = getStatusText(discordStatus);
     let details = `Discord Status: ${statusText}`;
     
     // Add activity information
     if (activities.length > 0) {
       const activity = activities[0];
-      if (activity && activity.name && activity.details) {
+      if (activity?.name && activity?.details) {
         details += `\nCurrently: ${activity.name} - ${activity.details}`;
-      } else if (activity && activity.name) {
+      } else if (activity?.name) {
         details += `\nCurrently: ${activity.name}`;
       }
     }
