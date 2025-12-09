@@ -72,6 +72,9 @@
     "vite": "^7.1.12",
     "vite-tsconfig-paths": "^5.1.4"
   },
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "ct3aMetadata": {
     "initVersion": "7.38.1"
   }
