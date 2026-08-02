@@ -1,29 +1,62 @@
-# Create T3 App
+# flakenstine.dev
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+My personal site and blog, built with [Astro](https://astro.build).
 
-## What's next? How do I make an app with this?
+## Stack
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+- **[Astro 5](https://astro.build)** — static output, with React islands for the interactive bits
+- **[Tailwind CSS v4](https://tailwindcss.com)** + **[shadcn/ui](https://ui.shadcn.com)**
+- **MDX content collections** for blog posts, with Shiki syntax highlighting
+- **[Vercel](https://vercel.com)** for hosting; Cloudflare for DNS
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+## Development
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+```bash
+pnpm install
+pnpm dev        # http://localhost:4321
+pnpm build      # production build into dist/
+pnpm preview    # serve the production build
+pnpm check      # astro check (types + template diagnostics)
+```
 
-## Learn More
+## Writing a post
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+Drop an `.mdx` file into `posts/`. The frontmatter is validated at build time by
+the schema in `src/content.config.ts`, so a typo fails the build instead of the
+page:
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+```mdx
+---
+title: "A new post"
+date: 2026-01-30
+description: "Shows up on the blog index, in RSS, and on social cards."
+image: "../src/assets/blog/my-image.png" # optional, optimized at build
+tags: [linux, personal] # optional, each becomes /blog/tags/<tag>
+---
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+Regular markdown, plus any Astro/React component you import.
+```
 
-## How do I deploy this?
+Images referenced with a relative path — in frontmatter or in the body — are
+optimized and given responsive `srcset`s. Images in `public/` are served as-is.
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+## Environment
+
+The contact form posts to `src/pages/api/contact.ts`, which needs SMTP
+credentials set in Vercel (and in `.env` locally):
+
+```
+EMAIL_HOST=
+EMAIL_PORT=
+EMAIL_SECURE=
+EMAIL_USER=
+EMAIL_PASSWORD=
+```
+
+Everything else is statically rendered — the contact endpoint is the only
+serverless function.
+
+## Deploying
+
+Pushing to `main` deploys via Vercel. `./deploy.sh -m "message"` builds first
+and only commits and pushes if the build succeeds.

@@ -2,10 +2,10 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { Image } from "astro:assets";
 import flakLogo from "@/assets/flak-logo.png";
-import TextType from "@/components/ui/text-type";
-import Tools from "@/components/tools";
+import TextType from "@/components/TextType.astro";
+import Tools from "@/components/Tools.astro";
 import { ContactForm } from "@/components/contact-form";
-import { SocialLinks } from "@/components/social-links";
+import SocialLinks from "@/components/SocialLinks.astro";
 ---
 
 <BaseLayout>
@@ -33,11 +33,9 @@ import { SocialLinks } from "@/components/social-links";
       <div class="space-y-4">
         <h1 class="text-2xl font-bold md:text-5xl">
           <TextType
-            client:load
             text="Hi there. I am Flakenstine."
             typingSpeed={75}
             initialDelay={1000}
-            showCursor={true}
             cursorCharacter="_"
           />
         </h1>
@@ -80,7 +78,7 @@ import { SocialLinks } from "@/components/social-links";
       <div class="space-y-4">
         <h2 class="text-xl">tools I like to use</h2>
         <div class="flex justify-center gap-4">
-          <Tools client:load />
+          <Tools />
         </div>
         <p class="text-sm text-gray-400">and more...</p>
       </div>
@@ -92,7 +90,7 @@ import { SocialLinks } from "@/components/social-links";
       {/* Contact Form */}
       <div class="w-full max-w-md space-y-4">
         <h2 class="text-xl">let&apos;s chat</h2>
-        <ContactForm client:load />
+        <ContactForm client:visible />
 
         <div class="text-center">
           <div class="flex w-full items-center justify-center gap-3">
@@ -100,7 +98,7 @@ import { SocialLinks } from "@/components/social-links";
             <p class="my-4">or</p>
             <div class="h-px w-1/4 shrink-0 bg-border"></div>
           </div>
-          <SocialLinks client:load />
+          <SocialLinks />
         </div>
       </div>
     </div>

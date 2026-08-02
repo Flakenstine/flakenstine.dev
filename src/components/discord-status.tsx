@@ -90,10 +90,7 @@ export function DiscordStatus({ userId, className = "" }: DiscordStatusProps) {
         }
         
         const raw: unknown = await response.json();
-        const data = raw as DiscordStatus;
-        console.log("Discord status data:", data); // Debug log
-        console.log("Discord status success:", data.success);
-        console.log("Discord status value:", data.data?.discord_status);
+        const data = raw as DiscordStatus; // Debug log
         setStatus(data);
         setError(null);
       } catch (err) {

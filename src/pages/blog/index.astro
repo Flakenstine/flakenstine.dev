@@ -1,35 +1,14 @@
 ---
 import { getCollection } from "astro:content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { getImage } from "astro:assets";
-import { BlogCard } from "@/components/blog-card";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
+import BlogCard from "@/components/BlogCard.astro";
+import { formatPostDate } from "@/lib/posts";
 
 const posts = (await getCollection("blog")).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
 );
 
-const cards = await Promise.all(
-  posts.map(async (post) => ({
-    ...post,
-    thumbnail: post.data.image
-      ? (await getImage({ src: post.data.image, width: 600, height: 380 })).src
-      : "",
-  })),
-);
-
-const formatDate = (date: Date) =>
-  date.toLocaleDateString("en-US", {
-    month: "2-digit",
-    day: "2-digit",
-    year: "numeric",
-    timeZone: "UTC",
-  });
+const tags = [...new Set(posts.flatMap((post) => post.data.tags))].sort();
 ---
 
 <BaseLayout
@@ -37,32 +16,49 @@ const formatDate = (date: Date) =>
   description="Welcome to my blog! Here you can find my latest thoughts and ideas."
 >
   <main class="container mx-auto px-4 py-16">
-    <h1 class="mb-8 text-center text-3xl font-bold">
-      flakenstine.dev | Blog
-    </h1>
+    <h1 class="mb-4 text-center text-3xl font-bold">flakenstine.dev | Blog</h1>
+    <p class="mb-8 text-center font-mono text-sm text-gray-400">
+      {posts.length}
+      {posts.length === 1 ? "post" : "posts"} ·{" "}
+      <a href="/rss.xml" class="text-[#00FF9D] hover:underline">RSS</a>
+    </p>
+
+    {
+      tags.length > 0 && (
+        <div class="mb-10 flex flex-wrap items-center justify-center gap-2">
+          {tags.map((tag) => (
+            <a
+              href={`/blog/tags/${tag}`}
+              class="rounded-full border border-[#00FF9D]/30 px-3 py-1 font-mono text-xs text-[#00FF9D] transition-colors hover:bg-[#00FF9D] hover:text-black"
+            >
+              #{tag}
+            </a>
+          ))}
+        </div>
+      )
+    }
+
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {
-        cards.length > 0 ? (
-          cards.map((post) => (
+        posts.length > 0 ? (
+          posts.map((post) => (
             <BlogCard
-              client:load
               title={post.data.title}
               description={post.data.description}
-              image={post.thumbnail}
+              image={post.data.image}
               slug={post.id}
-              date={formatDate(post.data.date)}
+              date={formatPostDate(post.data.date)}
+              tags={post.data.tags}
             />
           ))
         ) : (
-          <Card className="col-span-1 text-center sm:col-span-2 lg:col-span-3">
-            <CardHeader>
-              <CardTitle>No Blog Posts Available</CardTitle>
-              <CardDescription>
-                It seems there are no blog posts at the moment. Please check
-                back later!
-              </CardDescription>
-            </CardHeader>
-          </Card>
+          <div class="col-span-1 rounded-lg border border-white/10 p-8 text-center sm:col-span-2 lg:col-span-3">
+            <h2 class="text-lg font-semibold">No Blog Posts Available</h2>
+            <p class="mt-2 text-sm text-gray-400">
+              It seems there are no blog posts at the moment. Please check back
+              later!
+            </p>
+          </div>
         )
       }
     </div>

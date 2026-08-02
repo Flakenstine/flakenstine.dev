@@ -1,34 +1,48 @@
 ---
-import { getCollection, render } from "astro:content";
+import { render } from "astro:content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { MoveLeft } from "lucide-react";
+import { MoveLeft, MoveRight } from "lucide-react";
 import PostImage from "@/components/PostImage.astro";
+import { getSortedPosts, formatPostDate, getReadingTime } from "@/lib/posts";
+import type { Post } from "@/lib/posts";
 
 export async function getStaticPaths() {
-  const posts = await getCollection("blog");
-  return posts.map((post) => ({
+  const posts = await getSortedPosts();
+  return posts.map((post, i) => ({
     params: { slug: post.id },
-    props: { post },
+    props: {
+      post,
+      // Posts are newest-first, so the *next* entry is the older post.
+      newer: i > 0 ? posts[i - 1] : undefined,
+      older: posts[i + 1],
+    },
   }));
 }
 
-const { post } = Astro.props;
+interface Props {
+  post: Post;
+  newer?: Post;
+  older?: Post;
+}
+
+const { post, newer, older } = Astro.props;
 const { Content } = await render(post);
 
-const readingTime = Math.ceil(post.body!.trim().split(/\s+/).length / 200);
-const formattedDate = post.data.date.toLocaleDateString("en-US", {
-  month: "2-digit",
-  day: "2-digit",
-  year: "numeric",
-  timeZone: "UTC",
-});
+const readingTime = getReadingTime(post.body ?? "");
 ---
 
 <BaseLayout
   title={`flakenstine.dev | ${post.data.title}`}
+  headline={post.data.title}
   description={post.data.description}
+  image={post.data.image}
+  article={{
+    publishedTime: post.data.date,
+    author: post.data.author,
+    tags: post.data.tags,
+  }}
 >
-  <div class="container mx-auto px-4 py-8">
+  <main class="container mx-auto px-4 py-8">
     <a
       href="/blog"
       class="mb-8 inline-flex items-center gap-2 text-[#00FF9D] hover:underline"
@@ -39,19 +53,75 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
     <div class="mb-8 text-center">
       <h1 class="text-4xl font-bold">{post.data.title}</h1>
       <div
-        class="mt-4 flex items-center justify-center gap-2 text-sm text-gray-500"
+        class="mt-4 flex flex-wrap items-center justify-center gap-2 text-sm text-gray-500"
       >
         <span>by {post.data.author}</span>
         <span>•</span>
-        <span>{formattedDate}</span>
+        <time datetime={post.data.date.toISOString()}>
+          {formatPostDate(post.data.date)}
+        </time>
         <span>•</span>
         <span>{readingTime} minute read</span>
       </div>
+      {
+        post.data.tags.length > 0 && (
+          <div class="mt-4 flex flex-wrap items-center justify-center gap-2">
+            {post.data.tags.map((tag) => (
+              <a
+                href={`/blog/tags/${tag}`}
+                class="rounded-full border border-[#00FF9D]/30 px-3 py-1 font-mono text-xs text-[#00FF9D] transition-colors hover:bg-[#00FF9D] hover:text-black"
+              >
+                #{tag}
+              </a>
+            ))}
+          </div>
+        )
+      }
     </div>
     <article
       class="prose prose-invert prose-headings:text-white prose-h1:text-6xl prose-h2:text-3xl prose-p:text-gray-300 prose-a:text-[#00FF9D] prose-strong:text-white prose-code:text-white prose-pre:border prose-pre:border-[#00FF9D]/20 prose-blockquote:text-gray-300 prose-blockquote:border-[#00FF9D] prose-img:rounded-lg prose-img:mx-auto prose-img:shadow-lg mx-auto max-w-3xl"
     >
       <Content components={{ img: PostImage }} />
     </article>
-  </div>
+
+    {
+      (newer ?? older) && (
+        <nav
+          class="mx-auto mt-16 grid max-w-3xl gap-4 border-t border-white/10 pt-8 sm:grid-cols-2"
+          aria-label="More posts"
+        >
+          {newer ? (
+            <a
+              href={`/blog/${newer.id}`}
+              class="group rounded-lg border border-white/10 p-4 transition-colors hover:border-[#00FF9D]/40"
+            >
+              <span class="flex items-center gap-2 font-mono text-xs uppercase tracking-wide text-gray-500">
+                <MoveLeft className="h-3 w-3" />
+                Newer
+              </span>
+              <span class="mt-2 block font-semibold group-hover:text-[#00FF9D]">
+                {newer.data.title}
+              </span>
+            </a>
+          ) : (
+            <div />
+          )}
+          {older && (
+            <a
+              href={`/blog/${older.id}`}
+              class="group rounded-lg border border-white/10 p-4 transition-colors hover:border-[#00FF9D]/40 sm:text-right"
+            >
+              <span class="flex items-center gap-2 font-mono text-xs uppercase tracking-wide text-gray-500 sm:justify-end">
+                Older
+                <MoveRight className="h-3 w-3" />
+              </span>
+              <span class="mt-2 block font-semibold group-hover:text-[#00FF9D]">
+                {older.data.title}
+              </span>
+            </a>
+          )}
+        </nav>
+      )
+    }
+  </main>
 </BaseLayout>
