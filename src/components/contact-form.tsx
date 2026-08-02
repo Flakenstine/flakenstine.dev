@@ -1,7 +1,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -13,16 +12,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { contactSchema, type ContactValues } from "@/lib/schemas";
 
-// Define the Zod schema for validation
-const contactFormSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  email: z.string().email("Invalid email address"),
-  message: z.string().min(10, "Message is required"),
-});
 
-// Define the type for form values
-type ContactFormValues = z.infer<typeof contactFormSchema>;
 
 type ApiResponse = {
   message?: string;
@@ -30,8 +22,8 @@ type ApiResponse = {
 };
 
 export function ContactForm() {
-  const form = useForm<ContactFormValues>({
-    resolver: zodResolver(contactFormSchema),
+  const form = useForm<ContactValues>({
+    resolver: zodResolver(contactSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -39,7 +31,7 @@ export function ContactForm() {
     },
   });
 
-  async function onSubmit(data: ContactFormValues) {
+  async function onSubmit(data: ContactValues) {
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
