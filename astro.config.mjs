@@ -4,15 +4,17 @@ import react from "@astrojs/react";
 import mdx from "@astrojs/mdx";
 import tailwindcss from "@tailwindcss/vite";
 import sitemap from "@astrojs/sitemap";
-import vercel from "@astrojs/vercel";
+import node from "@astrojs/node";
 
 export default defineConfig({
   site: "https://flakenstine.dev",
   output: "static",
-  adapter: vercel(),
+  // Standalone: the built server runs itself, so the container needs no
+  // extra process manager. Everything is prerendered except /api/contact.
+  adapter: node({ mode: "standalone" }),
   integrations: [react(), mdx(), sitemap()],
   // Read at runtime by the contact endpoint. Using import.meta.env here would
-  // inline the values at build time, which bakes in `undefined` on Vercel.
+  // inline the values at build time, baking in whatever the builder had.
   env: {
     schema: {
       EMAIL_HOST: envField.string({ context: "server", access: "secret" }),
