@@ -8,6 +8,7 @@ import "@fontsource/figtree/400.css";
 import "@fontsource/figtree/500.css";
 import "@fontsource/figtree/600.css";
 import "@fontsource/figtree/700.css";
+import { ClientRouter, slide } from "astro:transitions";
 import SiteHeader from "@/components/SiteHeader.astro";
 import SiteFooter from "@/components/SiteFooter.astro";
 import { Toaster } from "@/components/ui/sonner";
@@ -32,13 +33,17 @@ const {
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
+    <ClientRouter />
   </head>
   <body class="min-h-screen bg-black font-sans text-white">
-    <SiteHeader />
-    <slot />
-    <SiteFooter />
+    <SiteHeader transition:persist />
+    <div transition:animate={slide({ duration: "0.4s" })}>
+      <slot />
+    </div>
+    <SiteFooter transition:persist />
     <Toaster
       client:load
+      transition:persist
       position="bottom-right"
       toastOptions={{
         style: {

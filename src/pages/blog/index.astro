@@ -1,7 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import PageTransition from "@/components/page-transition";
+import { getImage } from "astro:assets";
 import { BlogCard } from "@/components/blog-card";
 import {
   Card,
@@ -12,6 +12,15 @@ import {
 
 const posts = (await getCollection("blog")).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+
+const cards = await Promise.all(
+  posts.map(async (post) => ({
+    ...post,
+    thumbnail: post.data.image
+      ? (await getImage({ src: post.data.image, width: 600, height: 380 })).src
+      : "",
+  })),
 );
 
 const formatDate = (date: Date) =>
@@ -27,37 +36,35 @@ const formatDate = (date: Date) =>
   title="flakenstine.dev | Blog"
   description="Welcome to my blog! Here you can find my latest thoughts and ideas."
 >
-  <PageTransition client:load>
-    <main class="container mx-auto px-4 py-16">
-      <h1 class="mb-8 text-center text-3xl font-bold">
-        flakenstine.dev | Blog
-      </h1>
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {
-          posts.length > 0 ? (
-            posts.map((post) => (
-              <BlogCard
-                client:load
-                title={post.data.title}
-                description={post.data.description}
-                image={post.data.image}
-                slug={post.id}
-                date={formatDate(post.data.date)}
-              />
-            ))
-          ) : (
-            <Card className="col-span-1 text-center sm:col-span-2 lg:col-span-3">
-              <CardHeader>
-                <CardTitle>No Blog Posts Available</CardTitle>
-                <CardDescription>
-                  It seems there are no blog posts at the moment. Please check
-                  back later!
-                </CardDescription>
-              </CardHeader>
-            </Card>
-          )
-        }
-      </div>
-    </main>
-  </PageTransition>
+  <main class="container mx-auto px-4 py-16">
+    <h1 class="mb-8 text-center text-3xl font-bold">
+      flakenstine.dev | Blog
+    </h1>
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        cards.length > 0 ? (
+          cards.map((post) => (
+            <BlogCard
+              client:load
+              title={post.data.title}
+              description={post.data.description}
+              image={post.thumbnail}
+              slug={post.id}
+              date={formatDate(post.data.date)}
+            />
+          ))
+        ) : (
+          <Card className="col-span-1 text-center sm:col-span-2 lg:col-span-3">
+            <CardHeader>
+              <CardTitle>No Blog Posts Available</CardTitle>
+              <CardDescription>
+                It seems there are no blog posts at the moment. Please check
+                back later!
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        )
+      }
+    </div>
+  </main>
 </BaseLayout>

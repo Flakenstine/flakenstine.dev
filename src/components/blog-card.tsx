@@ -35,9 +35,7 @@ export function BlogCard({
         <MinimalCard>
           <MinimalCardImage src={image} alt={title} />
           <MinimalCardTitle className="text-gray-800">{title}</MinimalCardTitle>
-          <MinimalCardDescription>
-            <p>{description}</p>
-          </MinimalCardDescription>
+          <MinimalCardDescription>{description}</MinimalCardDescription>
           <MinimalCardFooter>
             <p className="text-sm text-gray-400">
               Published on {date.toString()}

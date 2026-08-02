@@ -10,6 +10,12 @@ export default defineConfig({
   output: "static",
   adapter: vercel(),
   integrations: [react(), mdx()],
+  markdown: {
+    shikiConfig: {
+      theme: "night-owl",
+      wrap: true,
+    },
+  },
   vite: {
     plugins: [tailwindcss()],
   },

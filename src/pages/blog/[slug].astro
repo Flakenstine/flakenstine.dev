@@ -1,8 +1,8 @@
 ---
 import { getCollection, render } from "astro:content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import PageTransition from "@/components/page-transition";
 import { MoveLeft } from "lucide-react";
+import PostImage from "@/components/PostImage.astro";
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog");
@@ -28,32 +28,30 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
   title={`flakenstine.dev | ${post.data.title}`}
   description={post.data.description}
 >
-  <PageTransition client:load>
-    <div class="container mx-auto px-4 py-8">
-      <a
-        href="/blog"
-        class="mb-8 inline-flex items-center gap-2 text-[#00FF9D] hover:underline"
+  <div class="container mx-auto px-4 py-8">
+    <a
+      href="/blog"
+      class="mb-8 inline-flex items-center gap-2 text-[#00FF9D] hover:underline"
+    >
+      <MoveLeft className="h-4 w-4" />
+      Back to Blog
+    </a>
+    <div class="mb-8 text-center">
+      <h1 class="text-4xl font-bold">{post.data.title}</h1>
+      <div
+        class="mt-4 flex items-center justify-center gap-2 text-sm text-gray-500"
       >
-        <MoveLeft className="h-4 w-4" />
-        Back to Blog
-      </a>
-      <div class="mb-8 text-center">
-        <h1 class="text-4xl font-bold">{post.data.title}</h1>
-        <div
-          class="mt-4 flex items-center justify-center gap-2 text-sm text-gray-500"
-        >
-          <span>by {post.data.author}</span>
-          <span>•</span>
-          <span>{formattedDate}</span>
-          <span>•</span>
-          <span>{readingTime} minute read</span>
-        </div>
+        <span>by {post.data.author}</span>
+        <span>•</span>
+        <span>{formattedDate}</span>
+        <span>•</span>
+        <span>{readingTime} minute read</span>
       </div>
-      <article
-        class="prose prose-invert prose-headings:text-white prose-h1:text-6xl prose-h2:text-3xl prose-p:text-gray-300 prose-a:text-[#00FF9D] prose-strong:text-white prose-code:text-white prose-pre:bg-gray-900 prose-blockquote:text-gray-300 prose-blockquote:border-[#00FF9D] prose-img:rounded-lg prose-img:mx-auto prose-img:shadow-lg mx-auto max-w-3xl"
-      >
-        <Content />
-      </article>
     </div>
-  </PageTransition>
+    <article
+      class="prose prose-invert prose-headings:text-white prose-h1:text-6xl prose-h2:text-3xl prose-p:text-gray-300 prose-a:text-[#00FF9D] prose-strong:text-white prose-code:text-white prose-pre:border prose-pre:border-[#00FF9D]/20 prose-blockquote:text-gray-300 prose-blockquote:border-[#00FF9D] prose-img:rounded-lg prose-img:mx-auto prose-img:shadow-lg mx-auto max-w-3xl"
+    >
+      <Content components={{ img: PostImage }} />
+    </article>
+  </div>
 </BaseLayout>
