@@ -1,0 +1,108 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PageTransition from "@/components/page-transition";
+import TextType from "@/components/ui/text-type";
+import Tools from "@/components/tools";
+import { ContactForm } from "@/components/contact-form";
+import { SocialLinks } from "@/components/social-links";
+---
+
+<BaseLayout>
+  <PageTransition client:load>
+    <main class="flex min-h-screen flex-col items-center">
+      <div
+        class="container mx-auto flex flex-col items-center justify-center gap-12 px-4 py-16 text-center"
+      >
+        {/* Logo Section */}
+        <div class="relative mb-4 flex h-64 w-64 items-center justify-center">
+          <div
+            class="absolute inset-0 rounded-full bg-[#00FF9D] opacity-20 blur-3xl"
+          >
+          </div>
+          <img
+            src="/flak-logo.png"
+            alt="Flakenstine Logo"
+            width="512"
+            height="512"
+            class="glow-effect relative z-10"
+          />
+        </div>
+
+        {/* Introduction */}
+        <div class="space-y-4">
+          <h1 class="text-2xl font-bold md:text-5xl">
+            <TextType
+              client:load
+              text="Hi there. I am Flakenstine."
+              typingSpeed={75}
+              initialDelay={1000}
+              showCursor={true}
+              cursorCharacter="_"
+            />
+          </h1>
+          <p class="text-1xl font-bold text-[#E1F8D4] md:py-10 md:text-5xl">
+            I like to make
+            <br />
+            cool <span class="text-[#00FF9D]">websites</span>.
+          </p>
+        </div>
+        <div
+          class="h-px w-full shrink-0 bg-transparent bg-gradient-to-r from-transparent via-[#00FF9D] to-transparent"
+        >
+        </div>
+
+        {/* About Text */}
+        <div
+          class="max-w-2xl space-y-6 text-center font-mono text-gray-400 transition-all duration-300 md:text-xl"
+        >
+          <p>
+            The web is my playground; Since high-school I have been playing
+            around with various web technologies and systems, my favorite thing
+            is to build really cool websites like this one!
+          </p>
+          <p>
+            I love to challenge myself to build scale-able and responsive
+            websites. I have also started to dive in to basic design using tools
+            such as figma.
+          </p>
+          <p>
+            Outside of the web-space, I love technology (especially anything
+            with an Apple on it), fantasy, video games, music, and various other
+            forms of art. If I&apos;m not tinkering on the web, You&apos;ll
+            usually find me roaming around the digital landscape known as World
+            of Warcraft. I am not very good at it, but from time to time I will
+            also ramble on my blogs posted to this site.
+          </p>
+        </div>
+
+        {/* Tools Section */}
+        <div class="space-y-4">
+          <h2 class="text-xl">tools I like to use</h2>
+          <div class="flex justify-center gap-4">
+            <Tools client:load />
+          </div>
+          <p class="text-sm text-gray-400">and more...</p>
+        </div>
+        <div
+          class="h-px w-full shrink-0 bg-transparent bg-gradient-to-r from-transparent via-[#00FF9D] to-transparent"
+        >
+        </div>
+
+        {/* Contact Form */}
+        <div class="w-full max-w-md space-y-4">
+          <h2 class="text-xl">let&apos;s chat</h2>
+          <ContactForm client:load />
+
+          <div class="text-center">
+            <div class="flex w-full items-center justify-center gap-3">
+              <div class="h-px w-1/4 shrink-0 bg-border"></div>
+              <p class="my-4">or</p>
+              <div class="h-px w-1/4 shrink-0 bg-border"></div>
+            </div>
+            <SocialLinks client:load />
+          </div>
+        </div>
+      </div>
+    </main>
+  </PageTransition>
+</BaseLayout>

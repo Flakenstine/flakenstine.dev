@@ -1,7 +1,5 @@
-"use client";
 
 import { motion } from "motion/react";
-import Link from "next/link";
 
 import {
   MinimalCard,
@@ -33,7 +31,7 @@ export function BlogCard({
       whileTap={{ scale: 0.95, rotate: -1 }}
       transition={{ type: "spring", stiffness: 300 }}
     >
-      <Link href={`/blog/${slug}`}>
+      <a href={`/blog/${slug}`}>
         <MinimalCard>
           <MinimalCardImage src={image} alt={title} />
           <MinimalCardTitle className="text-gray-800">{title}</MinimalCardTitle>
@@ -46,7 +44,7 @@ export function BlogCard({
             </p>
           </MinimalCardFooter>
         </MinimalCard>
-      </Link>
+      </a>
     </motion.div>
   );
 }

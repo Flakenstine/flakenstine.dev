@@ -1,0 +1,52 @@
+---
+import "@/styles/global.css";
+import "@fontsource/ibm-plex-mono/400.css";
+import "@fontsource/ibm-plex-mono/500.css";
+import "@fontsource/ibm-plex-mono/600.css";
+import "@fontsource/ibm-plex-mono/700.css";
+import "@fontsource/figtree/400.css";
+import "@fontsource/figtree/500.css";
+import "@fontsource/figtree/600.css";
+import "@fontsource/figtree/700.css";
+import SiteHeader from "@/components/SiteHeader.astro";
+import SiteFooter from "@/components/SiteFooter.astro";
+import { Toaster } from "@/components/ui/sonner";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "flakenstine.dev | websibte guy",
+  description = "I like to make cool websites",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.ico" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+  </head>
+  <body class="min-h-screen bg-black font-sans text-white">
+    <SiteHeader />
+    <slot />
+    <SiteFooter />
+    <Toaster
+      client:load
+      position="bottom-right"
+      toastOptions={{
+        style: {
+          background: "#000",
+          border: "1px solid #00FF9D",
+          color: "#fff",
+        },
+      }}
+    />
+  </body>
+</html>

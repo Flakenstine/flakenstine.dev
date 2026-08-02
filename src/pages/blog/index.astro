@@ -1,0 +1,63 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PageTransition from "@/components/page-transition";
+import { BlogCard } from "@/components/blog-card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+
+const posts = (await getCollection("blog")).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+
+const formatDate = (date: Date) =>
+  date.toLocaleDateString("en-US", {
+    month: "2-digit",
+    day: "2-digit",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+---
+
+<BaseLayout
+  title="flakenstine.dev | Blog"
+  description="Welcome to my blog! Here you can find my latest thoughts and ideas."
+>
+  <PageTransition client:load>
+    <main class="container mx-auto px-4 py-16">
+      <h1 class="mb-8 text-center text-3xl font-bold">
+        flakenstine.dev | Blog
+      </h1>
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          posts.length > 0 ? (
+            posts.map((post) => (
+              <BlogCard
+                client:load
+                title={post.data.title}
+                description={post.data.description}
+                image={post.data.image}
+                slug={post.id}
+                date={formatDate(post.data.date)}
+              />
+            ))
+          ) : (
+            <Card className="col-span-1 text-center sm:col-span-2 lg:col-span-3">
+              <CardHeader>
+                <CardTitle>No Blog Posts Available</CardTitle>
+                <CardDescription>
+                  It seems there are no blog posts at the moment. Please check
+                  back later!
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          )
+        }
+      </div>
+    </main>
+  </PageTransition>
+</BaseLayout>

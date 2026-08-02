@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { NextResponse } from "next/server";
+import type { APIRoute } from "astro";
 import nodemailer from "nodemailer";
 import type SMTPTransport from "nodemailer/lib/smtp-transport";
+
+export const prerender = false;
 
 type ContactRequest = {
   name: string;
@@ -11,24 +10,24 @@ type ContactRequest = {
   message: string;
 };
 
-export async function POST(request: Request) {
+export const POST: APIRoute = async ({ request }) => {
   try {
     const { name, email, message } = (await request.json()) as ContactRequest;
 
     const transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST,
-      port: Number(process.env.EMAIL_PORT),
-      secure: process.env.EMAIL_SECURE,
+      host: import.meta.env.EMAIL_HOST,
+      port: Number(import.meta.env.EMAIL_PORT),
+      secure: import.meta.env.EMAIL_SECURE,
       auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASSWORD,
+        user: import.meta.env.EMAIL_USER,
+        pass: import.meta.env.EMAIL_PASSWORD,
       },
     } as SMTPTransport.Options);
 
     await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+      from: import.meta.env.EMAIL_USER,
       replyTo: email,
-      to: process.env.EMAIL_USER,
+      to: import.meta.env.EMAIL_USER,
       subject: `Contact Form: ${name} <${email}>`,
       text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
       html: `
@@ -40,15 +39,15 @@ export async function POST(request: Request) {
       `,
     });
 
-    return NextResponse.json(
-      { message: "Email sent successfully!" },
-      { status: 200 },
+    return new Response(
+      JSON.stringify({ message: "Email sent successfully!" }),
+      { status: 200, headers: { "Content-Type": "application/json" } },
     );
   } catch (error) {
     console.error("Email error:", error);
-    return NextResponse.json(
-      { error: "Failed to send email." },
-      { status: 500 },
-    );
+    return new Response(JSON.stringify({ error: "Failed to send email." }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
-}
+};
