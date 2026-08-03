@@ -8,6 +8,8 @@ export const contactSchema = z.object({
     .string()
     .min(10, "Message is required")
     .max(5000, "Message is too long"),
+  // Deliberately empty: automated form fillers commonly populate every input.
+  website: z.string().max(0).optional(),
 });
 
 export type ContactValues = z.infer<typeof contactSchema>;

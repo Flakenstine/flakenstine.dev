@@ -5,16 +5,16 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { contactSchema, type ContactValues } from "@/lib/schemas";
-
-
 
 type ApiResponse = {
   message?: string;
@@ -28,6 +28,7 @@ export function ContactForm() {
       name: "",
       email: "",
       message: "",
+      website: "",
     },
   });
 
@@ -46,6 +47,8 @@ export function ContactForm() {
       if (response.ok) {
         toast.success(responseData.message ?? "Message sent successfully!");
         form.reset();
+      } else if (response.status === 429) {
+        toast.error(responseData.error ?? "Please wait before trying again.");
       } else {
         toast.error(responseData.error ?? "Failed to send message.");
       }
@@ -57,18 +60,31 @@ export function ContactForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <input
+          {...form.register("website")}
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          aria-hidden="true"
+          className="absolute -left-[9999px] h-px w-px overflow-hidden opacity-0"
+        />
         <FormField
           control={form.control}
           name="name"
           render={({ field }) => (
             <FormItem>
+              <FormLabel className="sr-only">Name</FormLabel>
               <FormControl>
                 <Input
                   placeholder="Your Name"
+                  autoComplete="name"
                   className="rounded border border-gray-300 p-2"
                   {...field}
                 />
               </FormControl>
+              <FormDescription className="sr-only">
+                Enter your name.
+              </FormDescription>
               <FormMessage className="text-sm text-red-500" />
             </FormItem>
           )}
@@ -78,13 +94,19 @@ export function ContactForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
+              <FormLabel className="sr-only">Email</FormLabel>
               <FormControl>
                 <Input
+                  type="email"
                   placeholder="hello@flakenstine.dev"
+                  autoComplete="email"
                   className="rounded border border-gray-300 p-2"
                   {...field}
                 />
               </FormControl>
+              <FormDescription className="sr-only">
+                Enter your email address.
+              </FormDescription>
               <FormMessage className="text-sm text-red-500" />
             </FormItem>
           )}
@@ -94,6 +116,7 @@ export function ContactForm() {
           name="message"
           render={({ field }) => (
             <FormItem>
+              <FormLabel className="sr-only">Message</FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="Type your message here"
@@ -101,6 +124,9 @@ export function ContactForm() {
                   {...field}
                 />
               </FormControl>
+              <FormDescription className="sr-only">
+                Enter your message.
+              </FormDescription>
               <FormMessage className="text-sm text-red-500" />
             </FormItem>
           )}

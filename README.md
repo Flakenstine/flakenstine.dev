@@ -47,8 +47,8 @@ credentials set in Dokploy (and in `.env` locally):
 
 ```
 EMAIL_HOST=
-EMAIL_PORT=
-EMAIL_SECURE=
+EMAIL_PORT=587
+EMAIL_SECURE=false
 EMAIL_USER=
 EMAIL_PASSWORD=
 ```
@@ -60,6 +60,11 @@ image works across environments.
 Everything else is prerendered to static files; `/api/contact` is the only
 route that runs on the server.
 
+The contact endpoint allows five requests per client per ten-minute window and
+includes a hidden honeypot field for basic bot protection. The limiter is
+process-local and best-effort for this single-container deployment; add an
+edge or shared-store limit if you scale to multiple replicas.
+
 ## Deploying
 
 Dokploy builds the `Dockerfile` in this repo. Two things to set in the UI:
@@ -68,9 +73,10 @@ Dokploy builds the `Dockerfile` in this repo. Two things to set in the UI:
 - **Environment** — the five `EMAIL_*` variables above.
 
 The image is multi-stage: it builds on Debian (sharp needs glibc for image
-optimization) and ships a ~240 MB Alpine runtime containing only `dist/` and
+optimization) and ships a small Alpine runtime containing only `dist/` and
 the three packages the server actually imports, running as the non-root
-`node` user, with a healthcheck on `/`.
+`node` user, with a healthcheck on the contact route that verifies the required
+runtime environment without sending an email.
 
 To run it locally the way Dokploy will:
 
@@ -78,6 +84,9 @@ To run it locally the way Dokploy will:
 docker build -t flakenstine-dev .
 docker run --rm -p 4321:4321 --env-file .env flakenstine-dev
 ```
+
+When building from an ARM64 development machine for the AMD64 deployment host,
+use `docker build --platform linux/amd64 -t flakenstine-dev .`.
 
 ### A note on dependencies
 
