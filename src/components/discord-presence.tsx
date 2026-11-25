@@ -1,9 +1,10 @@
+"use client";
+
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@ui-sdk/react/hover-card";
 import { useEffect, useState } from "react";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
+import { BrandIcon } from "@/components/brand-icon";
+import { button } from "@/components/ui/button";
+import { discord } from "@/data/brands";
 import {
   activityHeading,
   assetUrl,
@@ -14,118 +15,100 @@ import {
   STATUS_LABEL,
   type LanyardActivity,
   type LanyardData,
-  type LanyardResponse,
 } from "@/lib/lanyard";
+import { usePresence, type Presence } from "@/lib/presence";
+import { cn } from "@/lib/utils";
 
-interface Props {
-  userId: string;
-  href: string;
-  handle: string;
+/* Discord and Spotify serve these at the size they are shown. */
+/* eslint-disable @next/next/no-img-element */
+
+function statusOf(presence: Presence) {
+  if (presence.state === "ready") {
+    const status = presence.data.discord_status;
+    return { label: STATUS_LABEL[status], dot: STATUS_COLOR[status], status };
+  }
+  return {
+    label: presence.state === "loading" ? "Checking status" : "Status unavailable",
+    dot: "bg-[#80848e]",
+    status: "offline" as const,
+  };
 }
 
-export function DiscordPresence({ userId, href, handle }: Props) {
-  const [data, setData] = useState<LanyardData | null>(null);
-  const [state, setState] = useState<"loading" | "ready" | "error">("loading");
-  // Ticks once a second so elapsed timers and the Spotify bar stay live.
-  const [now, setNow] = useState(() => Date.now());
+/** What is going on right now, in a few words. */
+function nowOf(data: LanyardData) {
+  if (data.listening_to_spotify && data.spotify) {
+    return `listening to ${data.spotify.song} by ${data.spotify.artist}`;
+  }
+  const { primary } = splitActivities(data.activities);
+  if (primary) return `${activityHeading(primary).toLowerCase()} ${primary.name}`;
+  return STATUS_LABEL[data.discord_status].toLowerCase();
+}
 
-  useEffect(() => {
-    let cancelled = false;
-
-    const fetchStatus = async () => {
-      try {
-        const response = await fetch(
-          `https://api.lanyard.rest/v1/users/${userId}`,
-          { headers: { Accept: "application/json" } },
-        );
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-        const body = (await response.json()) as LanyardResponse;
-        if (cancelled) return;
-
-        if (!body.success) throw new Error("Lanyard returned success: false");
-        setData(body.data);
-        setState("ready");
-      } catch {
-        if (cancelled) return;
-        setData(null);
-        setState("error");
-      }
-    };
-
-    void fetchStatus();
-    const poll = setInterval(() => void fetchStatus(), 30_000);
-    const tick = setInterval(() => setNow(Date.now()), 1_000);
-
-    return () => {
-      cancelled = true;
-      clearInterval(poll);
-      clearInterval(tick);
-    };
-  }, [userId]);
-
-  const status = data?.discord_status ?? "offline";
-  const dotColor =
-    state === "ready" ? STATUS_COLOR[status] : "bg-[#80848e]";
-  const statusLabel =
-    state === "loading"
-      ? "Checking status…"
-      : state === "error"
-        ? "Status unavailable"
-        : STATUS_LABEL[status];
+/** Discord's own card, opened from the link to the profile. */
+export function DiscordPresence() {
+  const presence = usePresence();
+  const { label, dot, status } = statusOf(presence);
 
   return (
-    <HoverCard openDelay={120} closeDelay={120}>
-      <HoverCardTrigger asChild>
-        <a
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={`Discord — ${handle} (${statusLabel})`}
-          className="relative inline-flex h-8 items-center gap-2 rounded-md bg-[#00FF9D] px-3 text-xs font-medium text-black transition-colors hover:bg-[#00FF9D]/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#00FF9D]"
-        >
-          <svg
-            role="img"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="currentColor"
-            className="size-4"
-            aria-hidden="true"
-          >
-            <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z" />
-          </svg>
-          discord
-          <span
-            className={`size-3 shrink-0 rounded-full ${dotColor} ${
-              status === "online" && state === "ready" ? "animate-pulse" : ""
-            }`}
-            aria-hidden="true"
-          />
-        </a>
+    <HoverCard delay={120} closeDelay={160}>
+      <HoverCardTrigger
+        href={discord.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`Discord, ${discord.handle} (${label})`}
+        className={button("solid", "h-8 px-3 text-xs")}
+      >
+        <BrandIcon icon={discord.icon} className="size-4" />
+        discord
+        <span
+          aria-hidden="true"
+          className={cn(
+            "size-2.5 shrink-0 rounded-full ring-3 ring-black",
+            dot,
+            status === "online" && "animate-pulse",
+          )}
+        />
       </HoverCardTrigger>
-
       <HoverCardContent
         align="end"
         sideOffset={10}
-        className="w-80 border-[#00FF9D]/20 bg-[#111214] p-0 text-white shadow-xl"
+        className="popup w-80 overflow-hidden bg-[#111214]"
       >
-        <PresenceCard data={data} state={state} handle={handle} now={now} />
+        <PresenceCard presence={presence} />
       </HoverCardContent>
     </HoverCard>
   );
 }
 
-function PresenceCard({
-  data,
-  state,
-  handle,
-  now,
-}: {
-  data: LanyardData | null;
-  state: "loading" | "ready" | "error";
-  handle: string;
-  now: number;
-}) {
+/** A line under the headline: online, and up to something. */
+export function NowLine() {
+  const presence = usePresence();
+  if (presence.state !== "ready") return <p className="h-6" />;
+  const { dot } = statusOf(presence);
+
+  return (
+    <p className="now-line flex h-6 max-w-full items-center justify-center gap-2.5 font-mono text-sm text-muted">
+      <span aria-hidden="true" className={cn("size-2 shrink-0 rounded-full", dot)} />
+      <span className="truncate">{nowOf(presence.data)}</span>
+    </p>
+  );
+}
+
+/** Once a second, so elapsed timers and the Spotify bar stay live. */
+function useNow() {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const tick = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(tick);
+  }, []);
+  return now;
+}
+
+function PresenceCard({ presence }: { presence: Presence }) {
+  const now = useNow();
+  const { state, data } = presence;
+  const handle = discord.handle;
+
   if (state === "loading") {
     return (
       <div className="p-4 font-mono text-sm text-gray-400">
@@ -134,7 +117,7 @@ function PresenceCard({
     );
   }
 
-  if (state === "error" || !data) {
+  if (!data) {
     return (
       <div className="p-4 font-mono text-sm text-gray-400">
         Discord status is unavailable right now.
@@ -152,7 +135,7 @@ function PresenceCard({
   return (
     <div>
       {/* Banner + avatar, mirroring Discord's own profile popout */}
-      <div className="h-12 rounded-t-md bg-gradient-to-r from-[#00FF9D]/30 to-[#00FF9D]/5" />
+      <div className="h-12 bg-linear-to-r from-phosphor/40 to-phosphor/5" />
       <div className="px-4 pb-4">
         <div className="-mt-8 mb-3 flex items-end gap-3">
           <div className="relative">
@@ -196,8 +179,8 @@ function PresenceCard({
         ) : (
           <p className="font-mono text-xs text-gray-500">
             {data.discord_status === "offline"
-              ? "Offline — probably touching grass."
-              : `${STATUS_LABEL[data.discord_status]} — nothing going on right now.`}
+              ? "Offline, probably touching grass."
+              : `${STATUS_LABEL[data.discord_status]}, nothing going on right now.`}
           </p>
         )}
       </div>
@@ -222,7 +205,7 @@ function ActivityShell({
 }) {
   return (
     <div>
-      <p className="mb-2 font-mono text-[10px] font-bold uppercase tracking-wider text-[#00FF9D]">
+      <p className="mb-2 font-mono text-[10px] font-bold uppercase tracking-wider text-phosphor">
         {heading}
       </p>
       <div className="flex gap-3">
@@ -326,7 +309,7 @@ function SpotifyActivity({
           aria-valuenow={Math.round(progress)}
         >
           <div
-            className="h-full rounded-full bg-[#00FF9D] transition-[width] duration-1000 ease-linear"
+            className="h-full rounded-full bg-phosphor transition-[width] duration-1000 ease-linear"
             style={{ width: `${progress}%` }}
           />
         </div>

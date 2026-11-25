@@ -1,22 +1,35 @@
-import { getCollection, type CollectionEntry } from "astro:content";
+import { posts as allPosts } from "@/../.velite";
 
-export type Post = CollectionEntry<"blog">;
+export type { Post } from "@/../.velite";
+export type { Image as ImageInfo } from "velite";
 
-/** Newest first — the order posts are shown everywhere on the site. */
-export async function getSortedPosts(): Promise<Post[]> {
-  const posts = await getCollection("blog");
-  return posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+/** Newest first, the order posts are shown everywhere on the site. */
+export function getPosts() {
+  return allPosts.sort(
+    (a, b) => new Date(b.date).valueOf() - new Date(a.date).valueOf(),
+  );
 }
 
-export function formatPostDate(date: Date): string {
-  return date.toLocaleDateString("en-US", {
-    month: "2-digit",
-    day: "2-digit",
+export function getPost(slug: string) {
+  const posts = getPosts();
+  const index = posts.findIndex((post) => post.slug === slug);
+  if (index === -1) return;
+  return {
+    post: posts[index],
+    newer: posts[index - 1] as (typeof posts)[number] | undefined,
+    older: posts[index + 1] as (typeof posts)[number] | undefined,
+  };
+}
+
+export function getTags(posts: typeof allPosts) {
+  return [...new Set(posts.flatMap((post) => post.tags))].sort();
+}
+
+export function formatPostDate(date: string) {
+  return new Date(date).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
     year: "numeric",
     timeZone: "UTC",
   });
-}
-
-export function getReadingTime(body: string): number {
-  return Math.max(1, Math.ceil(body.trim().split(/\s+/).length / 200));
 }

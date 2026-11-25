@@ -1,0 +1,107 @@
+---
+title: "Hello World... (again)"
+slug: hello-world-again
+date: 2026-11-25
+description: "The site got a complete rebuild. Here's what changed, what I used, and why I did it."
+cover: ./hello-world-again-cover.png
+tags:
+  - web
+  - nextjs
+  - redesign
+  - personal
+---
+
+## A fresh start
+
+If you've been here before, you'll notice things look a little different. The whole site has been rebuilt from the ground up: new framework, new UI library, new everything. The black and green is still here (it's kind of my thing at this point), but under the hood it's an entirely different machine.
+
+The last version of this site was built with [Astro](https://astro.build). I understand that Astro is a really great tool for static sites, but I felt like it lacked a lot of "accessories" included in the box, so to speak. I also don't really enjoy the island system. I know it probably doesn't, but to me it felt like it really neutered React.
+
+So I tore it all down and started over.
+
+## The stack
+
+Here's what's powering things now:
+
+- **[Next.js 16](https://nextjs.org):** the whole site is prerendered at build time, except for the contact endpoint. View transitions handle the page changes.
+- **[Tailwind CSS v4](https://tailwindcss.com):** nearly every color on the site derives from one `--phosphor` variable.
+- **[ui-sdk](https://ui-sdk.dev):** this is the new one. It's a headless component library where behaviors are defined in a framework-free core and rendered in React (or Vue, Svelte, whatever). It's behind the command palette, the tooltips, hover cards, the contact form fields, drawers, toasts, and a custom primitive for the tool pad.
+- **[Velite](https://velite.js.org):** the content layer. Blog posts are MDX files, validated and compiled at build time, with auto-generated types.
+- **WebGL2:** no library, just shaders. The head on the homepage is rendered as thousands of individual code characters. More on that below.
+
+## The head
+
+The centerpiece of the homepage is my avatar, except it's not just an image anymore. It's rebuilt every time the page loads as a WebGL2 scene.
+
+Here's how it works: the original picture is sampled down to roughly 90 rows. Each pixel becomes one instanced quad, textured with a character from a code ramp (`·:;~+<>=/*{}?#%&@`). Brighter pixels get denser characters. The whole thing is rendered in a single draw call: one vertex shader positions every glyph, and one fragment shader textures them from a font atlas.
+
+The vertex shader does all the fun stuff:
+
+- **Assembly:** on load, every glyph flies in from a random spot on the page and settles into place.
+- **Turning:** the head follows your cursor with a bit of perspective, like it's watching you.
+- **Lens:** hover over it and the glyphs magnify under your cursor while the real colors bleed through.
+- **Scan:** a band of color sweeps across periodically, like a CRT refreshing.
+- **Charge and shock:** press and hold the head to charge it up, then let go. The glyphs explode outward from wherever you clicked and slowly pull back together.
+- **Scroll:** as the page scrolls past, the glyphs rain downward and scatter.
+
+The whole thing respects `prefers-reduced-motion`. If you have that set, the head just appears, with no flying, scanning, or floating. A shock fades it into its real colors instead of blowing it apart.
+
+## The strings
+
+The dividers between sections aren't just lines. They're simulated strings: 72 nodes connected by the wave equation. Drag your cursor across one and it rings. Each string is tuned to a different note (A3, G3, E3, D3), and if you turn on sound in the footer, you'll hear them play using Karplus-Strong synthesis. The pitch even changes depending on where you pluck. Closer to the ends plays higher, like fretting a guitar.
+
+## The tool pad
+
+The tools section is a macro pad now. Each tool is a key you can press, with arrow-key navigation that follows the visual layout. The screen at the top shows what you've selected, with a CRT scanline effect.
+
+It runs on a custom ui-sdk primitive. The `keypad` primitive composes `createChange` for state and `createRovingFocus` with `spatialMove` for the arrow keys, all defined once in framework-free TypeScript and then rendered with `createParts` in React.
+
+## The command palette
+
+Hit `⌘K` (or `Ctrl+K`) anywhere on the site. It's built with ui-sdk's Command component inside a Dialog, and it can:
+
+- Navigate to any page or post (with fuzzy search and highlighted matches)
+- Open any of my social links
+- Shock the head from anywhere (yes, even from the blog; it takes you home first)
+- Change the phosphor color
+- Toggle sound
+
+The phosphor picker lives on a nested command page. Type "phosphor" and press Enter to drill in, then Backspace to come back.
+
+## Three phosphors
+
+Speaking of which, the site isn't locked to green anymore. In the footer (or the command palette), you can switch between three colors:
+
+- **Mint:** the classic `#00FF9D`
+- **Amber:** warm CRT orange, `#FFB000`
+- **Ice:** cool blue, `#7CD7FF`
+
+Your choice is saved in localStorage via ui-sdk's preferences system and restored before React hydrates, so there's no flash.
+
+## Sound
+
+There's an optional sound layer. It's off by default (nobody likes a website that makes noise uninvited), but flip the switch in the footer and you'll hear:
+
+- Karplus-Strong string plucks when you cross a divider
+- Key clicks when you press a tool
+- A descending sawtooth zap when the head explodes
+
+All of it is synthesized in real time with the Web Audio API. No audio files.
+
+## The blog
+
+You're reading it. Posts are MDX files in the repo, processed by Velite at build time. Each post gets:
+
+- Validated frontmatter
+- Shiki syntax highlighting with the Night Owl theme
+- A table of contents (on wide screens) that follows your scroll
+- A reading progress bar
+- View transitions, so the cover image morphs from the blog grid into the post header and back
+
+The old blog had two posts. This one has one. Quality over quantity, right?
+
+## Poke around
+
+If you want to see how any of this works, the source is on [GitHub](https://github.com/flakenstine/flakenstine.dev). Feel free to poke around.
+
+Thanks for reading. Go pluck a string.

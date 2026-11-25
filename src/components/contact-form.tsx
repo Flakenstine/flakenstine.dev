@@ -1,144 +1,118 @@
+"use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { toast } from "sonner";
-import { contactSchema, type ContactValues } from "@/lib/schemas";
+import { Button } from "@ui-sdk/react/button";
+import { Field, FieldError, FieldLabel } from "@ui-sdk/react/field";
+import { Input } from "@ui-sdk/react/input";
+import { Textarea } from "@ui-sdk/react/textarea";
+import { toast } from "@ui-sdk/react/toast";
+import { useState } from "react";
+import { button } from "@/components/ui/button";
+import { shock } from "@/lib/shock";
 
-type ApiResponse = {
-  message?: string;
-  error?: string;
-};
+type ApiResponse = { message?: string; error?: string };
 
 export function ContactForm() {
-  const form = useForm<ContactValues>({
-    resolver: zodResolver(contactSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      message: "",
-      website: "",
-    },
-  });
+  const [sending, setSending] = useState(false);
 
-  async function onSubmit(data: ContactValues) {
+  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    setSending(true);
+
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(Object.fromEntries(new FormData(form))),
       });
-
-      const responseData = (await response.json()) as ApiResponse;
+      const body = (await response.json()) as ApiResponse;
 
       if (response.ok) {
-        toast.success(responseData.message ?? "Message sent successfully!");
+        toast.success("Message sent", {
+          description: "Thanks for writing. I'll get back to you soon.",
+        });
         form.reset();
-      } else if (response.status === 429) {
-        toast.error(responseData.error ?? "Please wait before trying again.");
+        shock(0.8);
       } else {
-        toast.error(responseData.error ?? "Failed to send message.");
+        toast.error("Message not sent", {
+          description: body.error ?? "Something went wrong. Please try again.",
+        });
       }
     } catch {
-      toast.error("Failed to send message.");
+      toast.error("Message not sent", {
+        description: "Check your connection and try again.",
+      });
+    } finally {
+      setSending(false);
     }
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <input
-          {...form.register("website")}
-          type="text"
-          tabIndex={-1}
-          autoComplete="off"
-          aria-hidden="true"
-          className="absolute -left-[9999px] h-px w-px overflow-hidden opacity-0"
+    <form onSubmit={onSubmit} className="space-y-5 text-left">
+      <input
+        name="website"
+        type="text"
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        className="absolute -left-[9999px] h-px w-px overflow-hidden opacity-0"
+      />
+      <div className="grid gap-5 sm:grid-cols-2">
+        <Field name="name" className="field">
+          <FieldLabel className="field-label">Name</FieldLabel>
+          <Input
+            required
+            maxLength={100}
+            autoComplete="name"
+            placeholder="Your name"
+            className="field-control h-11"
+          />
+          <FieldError match="valueMissing" className="field-error">
+            Enter your name.
+          </FieldError>
+        </Field>
+        <Field name="email" className="field">
+          <FieldLabel className="field-label">Email</FieldLabel>
+          <Input
+            type="email"
+            required
+            maxLength={200}
+            autoComplete="email"
+            placeholder="hello@flakenstine.dev"
+            className="field-control h-11"
+          />
+          <FieldError match="valueMissing" className="field-error">
+            Enter your email address.
+          </FieldError>
+          <FieldError match="typeMismatch" className="field-error">
+            Enter an email address like hello@flakenstine.dev.
+          </FieldError>
+        </Field>
+      </div>
+      <Field name="message" className="field">
+        <FieldLabel className="field-label">Message</FieldLabel>
+        <Textarea
+          required
+          minLength={10}
+          maxLength={5000}
+          placeholder="Type your message here"
+          className="field-control min-h-36 resize-y py-3"
         />
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="sr-only">Name</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Your Name"
-                  autoComplete="name"
-                  className="rounded border border-gray-300 p-2"
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription className="sr-only">
-                Enter your name.
-              </FormDescription>
-              <FormMessage className="text-sm text-red-500" />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="sr-only">Email</FormLabel>
-              <FormControl>
-                <Input
-                  type="email"
-                  placeholder="hello@flakenstine.dev"
-                  autoComplete="email"
-                  className="rounded border border-gray-300 p-2"
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription className="sr-only">
-                Enter your email address.
-              </FormDescription>
-              <FormMessage className="text-sm text-red-500" />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="message"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="sr-only">Message</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Type your message here"
-                  className="h-32 rounded border border-gray-300 p-2"
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription className="sr-only">
-                Enter your message.
-              </FormDescription>
-              <FormMessage className="text-sm text-red-500" />
-            </FormItem>
-          )}
-        />
-        <Button
-          type="submit"
-          className="w-full rounded bg-[#00FF9D] py-2 text-black hover:bg-[#00FF9D]/90 hover:text-black disabled:opacity-50"
-          disabled={form.formState.isSubmitting}
-        >
-          {form.formState.isSubmitting ? "Sending..." : "Send Message"}
-        </Button>
-      </form>
-    </Form>
+        <FieldError match="valueMissing" className="field-error">
+          Enter a message.
+        </FieldError>
+        <FieldError match="tooShort" className="field-error">
+          Make it at least 10 characters.
+        </FieldError>
+      </Field>
+      <Button
+        type="submit"
+        disabled={sending}
+        focusableWhenDisabled
+        className={button("solid", "w-full")}
+      >
+        {sending ? "Sending…" : "Send message"}
+      </Button>
+    </form>
   );
 }

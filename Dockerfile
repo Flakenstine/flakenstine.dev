@@ -1,50 +1,40 @@
 # syntax=docker/dockerfile:1
 
-# Build on Debian: sharp ships prebuilt glibc binaries, so image optimization
-# works without compiling libvips from source.
+# Debian throughout: sharp runs at build time and, for next/image, at runtime,
+# so both stages need the same libc.
 FROM node:24-slim AS base
 ENV PNPM_HOME="/pnpm" \
-    PATH="/pnpm:$PATH"
-RUN corepack enable
+    PATH="/pnpm:$PATH" \
+    NEXT_TELEMETRY_DISABLED=1
 WORKDIR /app
 
 # --- dependencies -----------------------------------------------------------
 FROM base AS deps
-COPY package.json pnpm-lock.yaml ./
+RUN npm install --global pnpm@10.34.9
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
     pnpm install --frozen-lockfile
 
 # --- build ------------------------------------------------------------------
-FROM base AS build
-COPY --from=deps /app/node_modules ./node_modules
+FROM deps AS build
 COPY . .
-# No secrets needed here: astro:env resolves EMAIL_* at runtime, not build time.
+# No secrets needed here: EMAIL_* are read per request, not at build time.
 RUN pnpm build
 
-# --- production dependencies ------------------------------------------------
-# Only what dist/server actually imports: clsx, nodemailer, zod. All pure JS,
-# so they copy cleanly onto the musl-based runtime image below.
-FROM base AS prod-deps
-COPY package.json pnpm-lock.yaml ./
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
-    pnpm install --frozen-lockfile --prod --ignore-scripts
-
 # --- runtime ----------------------------------------------------------------
-FROM node:24-alpine AS runtime
-ENV NODE_ENV=production
-WORKDIR /app
-
-COPY --from=prod-deps /app/node_modules ./node_modules
-COPY --from=build /app/dist ./dist
-COPY package.json ./
-
-# The standalone server binds to HOST:PORT; 0.0.0.0 so Dokploy can reach it.
-ENV HOST=0.0.0.0 \
+FROM base AS runtime
+ENV NODE_ENV=production \
+    HOSTNAME=0.0.0.0 \
     PORT=4321
+
+COPY --from=build --chown=node:node /app/.next/standalone ./
+COPY --from=build --chown=node:node /app/.next/static ./.next/static
+COPY --from=build --chown=node:node /app/public ./public
+
 EXPOSE 4321
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD wget --spider -q http://127.0.0.1:4321/api/contact || exit 1
+  CMD ["node", "-e", "fetch('http://127.0.0.1:4321/api/contact').then((r) => process.exit(r.ok ? 0 : 1), () => process.exit(1))"]
 
 USER node
-CMD ["node", "./dist/server/entry.mjs"]
+CMD ["node", "server.js"]

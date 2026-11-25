@@ -3,14 +3,23 @@
 # dependencies
 /node_modules
 /.pnp
-.pnp.js
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
 
 # testing
 /coverage
 
-# astro
-/dist/
-/.astro/
+# next.js
+/.next/
+/out/
+
+# velite
+/.velite/
+/public/static/
 
 # production
 /build
@@ -25,13 +34,13 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# local env files
-# Keep secrets out of git; `.env.example` is the committed template.
-.env
-.env*.local
+# env files (can opt-in for committing if needed)
+.env*
+!.env.example
+
+# vercel
+.vercel
 
 # typescript
 *.tsbuildinfo
-
-# idea files
-.idea
+next-env.d.ts
