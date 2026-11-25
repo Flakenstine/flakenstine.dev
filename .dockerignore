@@ -2,6 +2,9 @@
 .github
 node_modules
 .next
+.velite
+public/static
+*.tsbuildinfo
 .env
 .env*.local
 .DS_Store
